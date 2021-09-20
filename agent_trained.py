@@ -28,19 +28,25 @@ def on_key_press(event):
 
 keyboard.on_press(on_key_press)
 
+def label_func(x):
+    name = str(x.parent.parent.name)
+    inp = np.loadtxt("data/" + name + "/inputs.txt")
+    return inp[int(x.stem)]
+
 # load model
-learn = load_learner(Path("brains/"))
+learn = load_learner(Path("brains/export_old.pkl"))
 
 with mss() as sct:
     while running:
-        while not pause:
+        while not pause and running:
             screenshot = np.array(sct.grab(monitor))
             image = cv2.cvtColor(screenshot, cv2.COLOR_RGB2GRAY)
-            image = cv2.Canny(image, threshold1=119, threshold2=250)
+            image = cv2.Canny(image, threshold1=120, threshold2=250)
+            image[:130, 200:600] = 0
 
-            image = cv2.resize(image, (224, 224))
+            image = cv2.resize(image, (224, 224),  interpolation=cv2.INTER_AREA)
 
-            prediction_angle = learn.predict(image)
+            prediction_angle = learn.predict(image)[0][0] * np.pi
 
             print(f"predicted angle: {np.rad2deg(prediction_angle):.0f}")
 
@@ -51,4 +57,3 @@ with mss() as sct:
             target = center + offset
 
             pyautogui.moveTo(target[0], target[1])
-            time.sleep(0.2)
