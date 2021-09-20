@@ -1,2 +1,2 @@
-# snake-io-ai
-Easy AI agent playing Snake.io
+# Snake.io AI
+[Fast AI](https://docs.fast.ai/) agent playing on [Snake.io](https://snake.io/)
